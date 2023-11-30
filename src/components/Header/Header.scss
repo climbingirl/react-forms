@@ -1,0 +1,19 @@
+.header {
+  padding: 30px 0;
+
+  .nav {
+    display: flex;
+    justify-content: center;
+    column-gap: 50px;
+
+    &__link {
+      font-size: 25px;
+      font-weight: 600;
+      text-transform: uppercase;
+
+      &.active {
+        color: #0072e5;
+      }
+    }
+  }
+}
