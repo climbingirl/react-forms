@@ -1,0 +1,21 @@
+.card {
+  max-width: 285px;
+  border: 1px solid #a3a6aa;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.05) 2px 4px 9px 1px;
+  padding: 10px;
+  font-size: 18px;
+  line-height: 23px;
+  background-color: #fff;
+
+  &__line {
+    margin-bottom: 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  &__title {
+    color: #0072e5;
+  }
+}
