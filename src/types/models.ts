@@ -4,4 +4,5 @@ export interface CardModel {
   email: string;
   password: string;
   gender: string;
+  image: string;
 }

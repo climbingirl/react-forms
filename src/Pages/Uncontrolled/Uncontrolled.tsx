@@ -1,50 +1,37 @@
 import { useRef, useState } from 'react';
-import InputRegular from '../../components/Form/InputRegular/InputRegular';
-import InputsGender from '../../components/Form/InputGender/InputGender';
-import InputConsent from '../../components/Form/InputConsent/InputConsent';
-import * as yup from 'yup';
+import InputRegular from '../../components/Form/elements/InputRegular/InputRegular';
+import InputsGender from '../../components/Form/elements/InputGender/InputGender';
+import InputConsent from '../../components/Form/elements/InputConsent/InputConsent';
 import { useAppDispatch } from '../../hooks/redux';
 import { addCard } from '../../store/cardsSlice';
 import { useNavigate } from 'react-router-dom';
-
-const schema = yup.object().shape({
-  name: yup
-    .string()
-    .required('Name is required')
-    .matches(/^[A-Z]/, 'The first letter must be capitalized'),
-  age: yup.number().positive().required('Age is required'),
-  email: yup.string().email().required('Email is required'),
-  password: yup
-    .string()
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-      'Must contain numeric, uppercase and lowercase letter, special character'
-    )
-    .required('Password is required'),
-  gender: yup.string().required('Gender is required'),
-  consent: yup
-    .boolean()
-    .oneOf([true], 'Accept terms and conditions is required'),
-});
+import InputFile from '../../components/Form/elements/InputFile/InputFile';
+import { uncontrolledFormShema } from '../../utils/validation/uncontrolledFormShema';
+import { getBase64 } from '../../utils/helpers';
+import Form from '../../components/Form/Form';
 
 function Unontrolled() {
   const nameRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const password2Ref = useRef<HTMLInputElement>(null);
+  const confirmedPasswordRef = useRef<HTMLInputElement>(null);
   const genderRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
   ];
   const consentRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
+
   const initialErrors: Record<string, string> = {
     name: '',
     age: '',
     email: '',
     password: '',
+    confirmedPassword: '',
     gender: '',
     consent: '',
+    image: '',
   };
   const [errors, setErrors] = useState(initialErrors);
   const dispatch = useAppDispatch();
@@ -53,22 +40,26 @@ function Unontrolled() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = {
-      name: nameRef?.current?.value,
-      age: ageRef?.current?.value || null,
-      email: emailRef?.current?.value,
-      password: passwordRef?.current?.value,
+      name: nameRef.current?.value,
+      age: ageRef.current?.value || null,
+      email: emailRef.current?.value,
+      password: passwordRef.current?.value,
+      confirmedPassword: confirmedPasswordRef.current?.value,
       gender: genderRefs.find((g) => g.current?.checked === true)?.current
         ?.value,
-      consent: consentRef?.current?.checked,
+      consent: consentRef.current?.checked,
+      image: imageRef.current?.files && imageRef.current.files[0],
     };
 
     try {
-      const data = await schema.validate(formData, { abortEarly: false });
+      const data = await uncontrolledFormShema.validate(formData, {
+        abortEarly: false,
+      });
+      const cardData = { ...data, image: await getBase64(data.image) };
       setErrors(initialErrors);
-      dispatch(addCard(data));
+      dispatch(addCard(cardData));
       navigate('/');
     } catch (err) {
-      console.log(err.inner);
       const validatedErr = err.inner.reduce((acc, err) => {
         return {
           ...acc,
@@ -81,43 +72,49 @@ function Unontrolled() {
 
   return (
     <section className="uncontrolled">
-      <form method="post" className="form" onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <InputRegular
+          label="name"
           name="name"
           type="text"
           forwRef={nameRef}
           error={errors.name}
         />
         <InputRegular
+          label="age"
           name="age"
           type="number"
           forwRef={ageRef}
           error={errors.age}
         />
         <InputRegular
-          name="Email"
+          label="email"
+          name="email"
           type="text"
           forwRef={emailRef}
           error={errors.email}
         />
         <InputRegular
-          name="Password"
+          label="password"
+          name="password"
           type="password"
           forwRef={passwordRef}
           error={errors.password}
         />
         <InputRegular
-          name="Password"
+          label="confirm password"
+          name="confirmedPassword"
           type="password"
-          forwRef={password2Ref}
-          error={''}
+          forwRef={confirmedPasswordRef}
+          error={errors.confirmedPassword}
         />
         <InputsGender forwRef={genderRefs} error={errors.gender} />
         <InputConsent forwRef={consentRef} error={errors.consent} />
+        <InputFile forwRef={imageRef} error={errors.image} />
         <button className="form__submit" type="submit">
           Submit
         </button>
-      </form>
+      </Form>
     </section>
   );
 }

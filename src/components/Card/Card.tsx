@@ -29,6 +29,10 @@ function Card({ card }: CardProps) {
           <span className="card__title">Gender: </span>
           {card?.gender}
         </div>
+        <div className="card__line">
+          <span className="card__title">Image: </span>
+          {card?.image}
+        </div>
       </div>
     </div>
   );

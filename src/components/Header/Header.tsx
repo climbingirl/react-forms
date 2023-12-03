@@ -6,9 +6,6 @@ function Header() {
   return (
     <header className="header">
       <nav className="nav">
-        <NavLink className="nav__link" to={ROUTES.ROOT}>
-          Home
-        </NavLink>
         <NavLink className="nav__link" to={ROUTES.UNCONTROLLED}>
           Uncontrolled
         </NavLink>
