@@ -1,0 +1,14 @@
+.control-consent__inner {
+  display: flex;
+  align-items: end;
+  column-gap: 15px;
+
+  .input-consent {
+    height: 18px;
+    width: 18px;
+  }
+
+  .control__label {
+    margin-bottom: 0;
+  }
+}
