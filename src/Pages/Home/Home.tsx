@@ -1,10 +1,10 @@
 import Card from '../../components/Card/Card';
-import { useAppSelector } from '../../hooks/redux';
+import { useSelector } from 'react-redux';
 import { cardsSelector } from '../../store/cardsSelectors';
 import './Home.scss';
 
 function Home() {
-  const { cards } = useAppSelector(cardsSelector);
+  const { cards } = useSelector(cardsSelector);
 
   if (!cards.length) {
     return <section className="home-empty">No cards created!</section>;

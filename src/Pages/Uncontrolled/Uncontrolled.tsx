@@ -6,7 +6,7 @@ import { useAppDispatch } from '../../hooks/redux';
 import { addCard } from '../../store/cardsSlice';
 import { useNavigate } from 'react-router-dom';
 import InputFile from '../../components/Form/elements/InputFile/InputFile';
-import { uncontrolledFormShema } from '../../utils/validation/uncontrolledFormShema';
+import { shema } from '../../utils/validation/shema';
 import { getBase64 } from '../../utils/helpers';
 import Form from '../../components/Form/Form';
 
@@ -48,19 +48,23 @@ function Unontrolled() {
       gender: genderRefs.find((g) => g.current?.checked === true)?.current
         ?.value,
       consent: consentRef.current?.checked,
-      image: imageRef.current?.files && imageRef.current.files[0],
+      image: imageRef.current?.files,
     };
 
     try {
-      const data = await uncontrolledFormShema.validate(formData, {
+      const data = await shema.validate(formData, {
         abortEarly: false,
       });
-      const cardData = { ...data, image: await getBase64(data.image) };
+      const cardData = {
+        ...data,
+        image: await getBase64((data.image as FileList)[0]),
+      };
       setErrors(initialErrors);
       dispatch(addCard(cardData));
       navigate('/');
     } catch (err) {
-      const validatedErr = err.inner.reduce((acc, err) => {
+      const validatedErr = err.inner.reduce((acc: object, err) => {
+        console.log(err);
         return {
           ...acc,
           [err.path]: err.message,

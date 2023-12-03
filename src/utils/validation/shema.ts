@@ -1,8 +1,9 @@
 import * as yup from 'yup';
 
-export const controlledFormShema = yup.object().shape({
+export const shema = yup.object().shape({
   name: yup
     .string()
+    .transform((value) => (!value.length ? null : value))
     .required('Name is required')
     .matches(/^[A-Z]/, 'The first letter must be capitalized'),
   age: yup
@@ -13,6 +14,7 @@ export const controlledFormShema = yup.object().shape({
   email: yup.string().email().required('Email is required'),
   password: yup
     .string()
+    .transform((value) => (!value.length ? null : value))
     .required('Password is required')
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
@@ -20,23 +22,28 @@ export const controlledFormShema = yup.object().shape({
     ),
   confirmedPassword: yup
     .string()
-    .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Confirmed password is required'),
+    .transform((value) => (!value.length ? null : value))
+    .required('Confirmed password is required')
+    .oneOf([yup.ref('password')], 'Passwords must match'),
   gender: yup.string().required('Gender is required'),
   consent: yup
     .boolean()
     .oneOf([true], 'Accept terms and conditions is required'),
   image: yup
     .mixed()
+    .transform((value) => (!value.length ? null : value))
     .required('Image is required')
     .test(
       'is-valid-size',
       'Maximum allowed image size is 100KB',
-      (value) => value[0] && value[0].size <= 102400
+      (value) => (value as FileList)[0] && (value as FileList)[0].size <= 102400
     )
     .test(
       'is-valid-type',
       'Allow only jpeg and png image file extension',
-      (value) => ['image/jpeg', 'image/png'].includes(value[0] && value[0].type)
+      (value) =>
+        ['image/jpeg', 'image/png'].includes(
+          (value as FileList)[0] && (value as FileList)[0].type
+        )
     ),
 });

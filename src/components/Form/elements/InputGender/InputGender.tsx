@@ -42,11 +42,11 @@ function InputsGender({ forwRef, error, register }: InputGenderProps) {
         <label className="control__label" htmlFor="input-male">
           Male
         </label>
-        {inputs[0]}
+        {(inputs as JSX.Element[])[0]}
         <label className="control__label" htmlFor="input-female">
           Female
         </label>
-        {inputs[1]}
+        {(inputs as JSX.Element[])[1]}
       </div>
       <div className="control__error">{error}</div>
     </div>

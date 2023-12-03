@@ -6,7 +6,7 @@ import { FormValues } from '../../types/form';
 import { useForm } from 'react-hook-form';
 import { addCard } from '../../store/cardsSlice';
 import { CardModel } from '../../types/models';
-import { controlledFormShema } from '../../utils/validation/controlledFormShema';
+import { shema } from '../../utils/validation/shema';
 import InputRegular from '../../components/Form/elements/InputRegular/InputRegular';
 import InputsGender from '../../components/Form/elements/InputGender/InputGender';
 import InputConsent from '../../components/Form/elements/InputConsent/InputConsent';
@@ -22,7 +22,7 @@ function Controlled() {
     formState: { errors, isValid },
   } = useForm<FormValues>({
     mode: 'onChange',
-    resolver: yupResolver(controlledFormShema),
+    resolver: yupResolver(shema),
   });
 
   async function onSubmit(data: FormValues) {
